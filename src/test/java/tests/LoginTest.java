@@ -3,54 +3,61 @@ package tests;
 import bases.baseTest;
 import pages.LoginPage;
 import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
 
 public class LoginTest extends baseTest {
     private LoginPage loginPage;
 
+    @BeforeMethod
+    public void setUpTest() {
+        loginPage = new LoginPage(page);
+
+            page.navigate("https://opensource-demo.orangehrmlive.com/web/index.php/auth/login");
+        // Chờ input username xuất hiện
+        //page.waitForSelector("//input[@name='username']");
+
+    }
+
     @Test
-    public void testValidLogin() {
+    public void testLoginSuccess() {
         loginPage.loginAs("Admin", "admin123");
         page.waitForURL("**/dashboard/index");
-        Assert.assertTrue(page.url().contains("/dashboard/index"),
-                "Login không thành công, không thấy 'dashboard' trong URL!");
-
+        Assert.assertTrue(loginPage.isLoginSuccess(), "Login failed!");
     }
 
-    @Test
-    public void testInvalidLogin_WrongUserAndPass() {
-        loginPage.loginAs("wrongUser", "wrongPass");
-        Assert.assertEquals(loginPage.getErrorMessage(), "Invalid credentials");
+
+    @DataProvider(name = "loginData")
+    public Object[][] loginData() {
+        return new Object[][]{
+                {"wrongUser", "wrongPass", "Invalid credentials", "invalid"},
+                {"", "admin123", "Required", "emptyUser"},
+                {"Admin", "", "Required", "emptyPass"},
+                {"", "", "Required", "emptyBoth"}
+        };
     }
 
-    @Test
-    public void testInvalidLogin_CorrectUserWrongPass() {
-        loginPage.loginAs("Admin", "wrongPass");
-        Assert.assertEquals(loginPage.getErrorMessage(), "Invalid credentials");
-    }
+    @Test(dataProvider = "loginData")
+    public void InvalidtestLogin(String username, String password, String expectedResult, String caseType) {
+        loginPage.loginAs(username, password);
 
-    @Test
-    public void testInvalidLogin_WrongUserCorrectPass() {
-        loginPage.loginAs("wrongUser", "admin123");
-        Assert.assertEquals(loginPage.getErrorMessage(), "Invalid credentials");
-    }
+        switch (caseType) {
 
-    //@Test
-    public void testInvalidLogin_EmptyUserAndPass() {
-        loginPage.loginAs(" ", " ");
-        Assert.assertEquals(loginPage.getRequiedMessage(), "Required");
-    }
+            case "invalid":
+                Assert.assertEquals(loginPage.getInvalidError(), expectedResult, "Invalid login message!");
+                break;
 
-    //@Test
-    public void testInvalidLogin_EmptyUser() {
-        loginPage.loginAs("", "admin123");
-        Assert.assertEquals(loginPage.getRequiedMessage(), "Required");
-    }
+            case "emptyUser":
+                Assert.assertEquals(loginPage.getUserRequiredError(), expectedResult, "Wrong message Required in Username!");
+                break;
 
-    //@Test
-    public void testInvalidLogin_EmptyPass() {
-        loginPage.loginAs("Admin", "");
-        Assert.assertEquals(loginPage.getRequiedMessage(), "Required");
+            case "emptyPass":
+                Assert.assertEquals(loginPage.getPassRequiredError(), expectedResult, "Wrong message Required in Password!");
+                break;
+
+            case "emptyBoth":
+                Assert.assertEquals(loginPage.getUserRequiredError(), expectedResult, "Wrong message Required in Username!");
+                Assert.assertEquals(loginPage.getPassRequiredError(), expectedResult, "Wrong message Required in Password!");
+                break;
+        }
     }
 }

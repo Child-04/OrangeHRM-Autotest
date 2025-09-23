@@ -1,7 +1,7 @@
 package bases;
+
 import com.microsoft.playwright.*;
 import org.testng.annotations.*;
-
 
 public class baseTest {
     protected Playwright playwright;
@@ -19,15 +19,6 @@ public class baseTest {
         context = browser.newContext();
         page = context.newPage();
         page.navigate("https://opensource-demo.orangehrmlive.com/web/index.php/auth/login");
-
-
-        page.locator("//input[@name='username']").fill("Admin");
-        page.locator("//input[@name='password']").fill("admin123");
-        page.locator("//button[@type='submit']").click();
-
-        // Chờ trang dashboard load
-        page.waitForURL("**/dashboard/index");
-
     }
 
     @AfterClass
