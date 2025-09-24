@@ -1,4 +1,4 @@
-package bases;
+package Bases;
 
 
 import org.testng.annotations.BeforeClass;

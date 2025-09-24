@@ -1,4 +1,4 @@
-package bases;
+package Bases;
 
 import com.microsoft.playwright.*;
 import org.testng.annotations.*;

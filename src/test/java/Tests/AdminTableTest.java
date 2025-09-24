@@ -1,8 +1,7 @@
-package tests;
+package Tests;
 
-import bases.LoggedInBaseTest;
-import bases.baseTest;
-import pages.AdminPage;
+import Bases.LoggedInBaseTest;
+//import pages.AdminPage;
 import org.testng.annotations.Test;
 
 import java.util.List;
@@ -12,7 +11,7 @@ public class AdminTableTest extends LoggedInBaseTest {
 
     @Test
     public void test_GetUserTable() {
-        AdminPage adminPage = new AdminPage(page);
+        pages.AdminPage adminPage = new pages.AdminPage(page);
         adminPage.openAdminPage();
 
         // Call method in AdminPage

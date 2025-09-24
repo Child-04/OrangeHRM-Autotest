@@ -1,6 +1,6 @@
-package tests;
+package Tests;
 
-import bases.baseTest;
+import Bases.baseTest;
 import pages.LoginPage;
 import org.testng.Assert;
 import org.testng.annotations.*;
